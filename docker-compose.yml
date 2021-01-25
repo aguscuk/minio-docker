@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  my-minio:
+    restart: always
+    image: minio/minio:RELEASE.2021-01-16T02-19-44Z
+    volumes:
+      - ./storage:/data
+    ports:
+      - "39000:9000"
+    networks:
+      - minio
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: minio-access-key
+      MINIO_SECRET_KEY: minio-secret-key
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+networks:
+  minio:
+    driver: overlay
